@@ -32,7 +32,7 @@ class Ghorebazar(scrapy.Spider) :
     def findCategory(self, category, categoryName):
         a = category.xpath('a').extract()
         if len(category.xpath('a').extract()) > 0 :
-            categoryName.append(category.xpath('a/text()').extract_first())
+            categoryName.append(category.xpath('a/text()').extract_first().strip())
         else :
             return
         sub = category.css('ul').xpath('li')
@@ -52,7 +52,7 @@ class Ghorebazar(scrapy.Spider) :
             item['crawl_id'] = getattr(self, "crawl_id", str(uuid.uuid1()))
             item['category'] = response.meta['menu']['category']
             item['category_id'] = ' >> '.join(item['category'])
-            item['imgUrl'] = product.css('img::attr(src)').get()
+            item['imgUrl'] = [product.css('img::attr(src)').get()]
             item['quantity'] = product.css('.running-offer-desc::text').extract_first()
             item['price'] = product.css('.product-card-price::text').extract_first()
             item['productUrl'] = response.meta['menu']['menuUrl']
@@ -61,6 +61,6 @@ class Ghorebazar(scrapy.Spider) :
             item['site_name'] = 'ghorebazar.com'
             item['size'] = 'n/a'
             item['details'] = 'n/a'
-            item['title'] = product.css('h1 a::text').extract_first()
+            item['title'] = product.css('h1 a::text').extract_first().strip()
 
             yield item
